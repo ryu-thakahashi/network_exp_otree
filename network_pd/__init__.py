@@ -183,13 +183,13 @@ class ResultsWaitPage(WaitPage):
 
 
 class Results(Page):
-    timeout_seconds = 5
+    # timeout_seconds = 5
 
-    # @staticmethod
-    # def get_timeout_seconds(player):
-    #     if player.participant.vars.get("is_dropped", False):
-    #         return 10
-    #     return 1
+    @staticmethod
+    def get_timeout_seconds(player):
+        if player.participant.vars.get("is_dropped", False):
+            return 10
+        return 1
 
     @staticmethod
     def js_vars(player: Player):
