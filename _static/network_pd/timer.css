@@ -1,0 +1,45 @@
+.base-timer {
+	position: relative;
+	width: 200px; /* 好きなサイズに調整してOK */
+	margin: 50px auto;
+}
+.base-timer__svg {
+	width: 100%;
+	height: auto;
+	transform: rotate(90deg); /* 12時スタートに */
+	overflow: visible;
+	transform-origin: center; /* 中心で回転 */
+}
+.base-timer__circle {
+	fill: none;
+	stroke-width: 10;
+}
+.base-timer__path-elapsed {
+	stroke: #ddd; /* 背景のグレー */
+}
+.base-timer__path-remaining {
+	fill: none;
+	stroke-width: 10;
+	stroke-linecap: round;
+	transition: stroke-dasharray 1s linear, stroke 0.5s linear;
+}
+.base-timer__label {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 2rem;
+	color: #333;
+	pointer-events: none;
+}
+
+/* 色切替用ユーティリティ */
+.info {
+	stroke: #28a745;
+} /* 緑 */
+.warning {
+	stroke: #ffc107;
+} /* 黄 */
+.alert {
+	stroke: #dc3545;
+} /* 赤 */

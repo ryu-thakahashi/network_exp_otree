@@ -1,0 +1,8 @@
+- [x] display payoff.js を作成
+- [x] payoff を取得する関数の作成
+- [x] payoff を計算する
+- [x] results の返す引数を用意する
+- [x] 近傍の payofff を返す
+- [x] js.vars で payoff をクライアントに投げる
+- [x] show_payoff で変更する（T vs. F）
+- [x] 時間が来たら自動送信されるように変更
