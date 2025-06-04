@@ -5,7 +5,7 @@ SESSION_CONFIGS = [
     dict(
         name="network_pd",
         display_name="Network Public Goods Game (old)",
-        num_demo_participants=6,
+        num_demo_participants=12,
         app_sequence=["network_pd"],
         # use_browser_bots=True,
     ),
