@@ -39,9 +39,7 @@ class Player(BasePlayer):
         label="Choose your action:",
         widget=widgets.RadioSelect,
     )
-    time_out = models.BooleanField(
-        initial=False,
-    )
+    time_out = models.BooleanField(initial=False)
     current_payoff = models.IntegerField(
         label="Current payoff",
         initial=0,
@@ -155,13 +153,13 @@ class WaitForAll(WaitPage):
 class Decision(Page):
     form_model = "player"
     form_fields = ["action"]
-    timeout_seconds = 5
 
-    # @staticmethod
-    # def get_timeout_seconds(player):
-    #     if player.participant.vars.get("is_dropped"):
-    #         return 20
-    #     return 1
+    @staticmethod
+    def get_timeout_seconds(player):
+        is_dropped = player.participant.vars.get("is_dropped", False)
+        if is_dropped:
+            return 5
+        return 20
 
     @staticmethod
     def js_vars(player: Player):
@@ -172,14 +170,18 @@ class Decision(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-        if timeout_happened:
-            player.participant.vars["is_dropped"] = True
-            player.action = random.randint(0, 1)
         player.time_out = timeout_happened
+
+        if timeout_happened:
+            player.action = random.randint(0, 1)
+            player.participant.vars["is_dropped"] = True
+        else:
+            player.participant.vars["is_dropped"] = False
 
 
 class ResultsWaitPage(WaitPage):
     after_all_players_arrive = "set_payoffs"
+    timeout_seconds = 5
 
 
 class Results(Page):
@@ -187,9 +189,10 @@ class Results(Page):
 
     @staticmethod
     def get_timeout_seconds(player):
-        if player.participant.vars.get("is_dropped", False):
-            return 10
-        return 1
+        is_dropped = player.participant.vars.get("is_dropped", False)
+        if is_dropped:
+            return 5
+        return 10
 
     @staticmethod
     def js_vars(player: Player):
