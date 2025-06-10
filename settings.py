@@ -9,6 +9,13 @@ SESSION_CONFIGS = [
         app_sequence=["network_pd"],
         # use_browser_bots=True,
     ),
+    dict(
+        name="network_pd_live",
+        display_name="Network Public Goods Game (Live page)",
+        num_demo_participants=12,
+        app_sequence=["network_pd_live"],
+        # use_browser_bots=True,
+    ),
 ]
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.

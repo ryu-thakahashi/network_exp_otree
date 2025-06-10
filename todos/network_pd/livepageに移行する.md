@@ -1,0 +1,3 @@
+- [x] アプリを作成する
+- [x] Decision に変更する
+- [ ] Decision Page の見た目を揃える

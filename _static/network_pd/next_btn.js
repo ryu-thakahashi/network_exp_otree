@@ -1,5 +1,5 @@
 const nextBtn = document.getElementsByClassName("otree-btn-next")[0];
-console.log(nextBtn);
+console.log("nextBtn", nextBtn);
 
 nextBtn.addEventListener("click", function () {
 	liveSend({ confirm: 1 });
