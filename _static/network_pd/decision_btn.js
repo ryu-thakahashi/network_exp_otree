@@ -7,7 +7,7 @@ btnA.addEventListener("click", function () {
 });
 
 btnB.addEventListener("click", function () {
-	selectOptionAndSubmit(1);
+	selectOptionAndSubmit(0);
 	liveSend({ action: 0 });
 });
 
@@ -28,8 +28,6 @@ function liveRecv(data) {
 	if (type === "game_finished") {
 		document.getElementById("form").submit();
 	}
-	// handle other types of messages here..
-	// your code goes here
 }
 
 window.addEventListener("unload", function () {
