@@ -229,6 +229,8 @@ class Decision(Page):
 
 
 class DecisionWaitPage(WaitPage):
+    template_name = "network_pd/MyWaitPage.html"
+
     def after_all_players_arrive(group: Group):
         print("DecisionWaitPage: after_all_players_arrive")
         set_payoffs(group)
