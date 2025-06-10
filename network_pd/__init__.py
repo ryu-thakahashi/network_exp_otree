@@ -1,6 +1,17 @@
 from otree.api import *
 import time
 import random
+import otree.channels.utils as channel_utils
+import otree.tasks
+import otree.common
+from otree.database import db, dbq
+from typing import Optional
+
+from otree.models_concrete import (
+    CompletedSubsessionWaitPage,
+    CompletedGroupWaitPage,
+    CompletedGBATWaitPage,
+)
 
 doc = """
 Your app description
@@ -176,11 +187,22 @@ class Decision(Page):
     form_fields = ["action"]
 
     @staticmethod
+    def live_method(player: Player, data):
+        player.action = data["action"]
+        print(f"Player {player.id_in_group} action: {player.action}")
+
+        if player.action == 99:
+            player.participant.vars["is_dropped"] = True
+        else:
+            player.participant.vars["is_dropped"] = False
+        return {0: "game_finished"}
+
+    @staticmethod
     def get_timeout_seconds(player):
         is_dropped = player.participant.vars.get("is_dropped", False)
         if is_dropped:
-            return 5
-        return 2
+            return 5000
+        return 2000
 
     @staticmethod
     def js_vars(player: Player):
@@ -208,8 +230,34 @@ class Decision(Page):
 
 class DecisionWaitPage(WaitPage):
     def after_all_players_arrive(group: Group):
+        print("DecisionWaitPage: after_all_players_arrive")
         set_payoffs(group)
         set_conditions(group)
+
+    def socket_url(self):
+        session_pk = self._session_pk
+        page_index = self._index_in_pages
+        participant_id = self.participant.id
+
+        res = channel_utils.group_wait_page_path(
+            session_pk=session_pk,
+            page_index=page_index,
+            participant_id=participant_id,
+            group_id=self.player.group_id,
+        )
+        print(f"DecisionWaitPage: res = {res}")
+
+        # get decided player number
+        decided_count = 0
+        for p in self.player.group.get_players():
+            if p.field_maybe_none("action") is not None:
+                decided_count += 1
+        print(f"DecisionWaitPage: decided_count = {decided_count}")
+        if decided_count == C.PLAYERS_PER_GROUP:
+            # if all players have decided, mark the group as completed
+            self._mark_completed_and_notify(self.player.group)
+
+        return res
 
 
 class Results(Page):

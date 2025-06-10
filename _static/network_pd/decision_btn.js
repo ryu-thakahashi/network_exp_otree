@@ -1,13 +1,14 @@
-document.addEventListener("DOMContentLoaded", function () {
-	// Aボタン（Cを選択）
-	document.getElementById("btn-A").addEventListener("click", function () {
-		selectOptionAndSubmit(1);
-	});
+const btnA = document.getElementById("btn-A");
+const btnB = document.getElementById("btn-B");
 
-	// Bボタン（Dを選択）
-	document.getElementById("btn-B").addEventListener("click", function () {
-		selectOptionAndSubmit(0);
-	});
+btnA.addEventListener("click", function () {
+	selectOptionAndSubmit(1);
+	liveSend({ action: 1 });
+});
+
+btnB.addEventListener("click", function () {
+	selectOptionAndSubmit(1);
+	liveSend({ action: 0 });
 });
 
 function selectOptionAndSubmit(value) {
@@ -19,7 +20,18 @@ function selectOptionAndSubmit(value) {
 	if (radioButton) {
 		radioButton.checked = true;
 	}
-
-	// Next ボタンをクリック
-	document.getElementById("next-button").click();
 }
+
+function liveRecv(data) {
+	console.log("received a message!", data);
+	let type = data.type;
+	if (type === "game_finished") {
+		document.getElementById("form").submit();
+	}
+	// handle other types of messages here..
+	// your code goes here
+}
+
+window.addEventListener("unload", function () {
+	liveSend({ action: 99 });
+});

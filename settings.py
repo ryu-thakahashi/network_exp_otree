@@ -52,12 +52,27 @@ SECRET_KEY = "6741627010810"
 
 INSTALLED_APPS = ["otree"]
 
-INSTALLED_APPS += ["channels", "otree.channels"]
+# added codes
+MIDDLEWARE = ["network_pd.middleware.RequestLogMiddleware"]
 
-ASGI_APPLICATION = "rand_network.asgi.application"
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        # oTree から出るログを全部拾う
+        "otree": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        # Channels の低レイヤーも拾いたいなら
+        "channels": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
 }
