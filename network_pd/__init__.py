@@ -10,7 +10,7 @@ Your app description
 
 class C(BaseConstants):
     NAME_IN_URL = "network_pd"
-    PLAYERS_PER_GROUP = 6
+    PLAYERS_PER_GROUP = 12
     NUM_ROUNDS = 15
     BC_RATIO = 4
     NEIGHBOR_NUM = 4
@@ -128,6 +128,19 @@ def record_neighbor_payoffs(player: Player) -> None:
     player.neighbor_payoffs = ",".join([str(a) for a in nei_payoffs])
 
 
+def record_neighbor_coop_ratio(player: Player) -> None:
+    player_list = player.group.get_players()
+    action_list = [p.get_action() for p in player_list]
+    nei_actions = get_neighbors_actions(
+        action_list, player.id_in_group - 1, C.NEIGHBOR_NUM
+    )
+    coop_count = sum(nei_actions)
+    if len(nei_actions) > 0:
+        player.neighbor_coop_ratio = coop_count / len(nei_actions)
+    else:
+        player.neighbor_coop_ratio = 0.0
+
+
 def record_highest_action(player: Player) -> None:
     player_list = player.group.get_players()
     action_list = [p.get_action() for p in player_list]
@@ -153,6 +166,7 @@ def record_show_payoffs(player: Player) -> None:
 def save_player_data(player: Player):
     player.payoff += player.current_payoff
     record_neighbor_actions(player)
+    record_neighbor_coop_ratio(player)
     record_neighbor_payoffs(player)
     record_highest_action(player)
     record_show_payoffs(player)
