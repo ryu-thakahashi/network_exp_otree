@@ -51,3 +51,13 @@ Here are some oTree games.
 SECRET_KEY = "6741627010810"
 
 INSTALLED_APPS = ["otree"]
+
+INSTALLED_APPS += ["channels", "otree.channels"]
+
+ASGI_APPLICATION = "rand_network.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}

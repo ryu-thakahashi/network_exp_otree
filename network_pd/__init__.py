@@ -21,21 +21,17 @@ class Subsession(BaseSubsession):
 
 def creating_session(subsession: Subsession):
     print("creating_session")
+
     if subsession.round_number == 1:
-        for player in subsession.get_players():
-            # 各プレイヤーにグループを割り当てる
-            if player.group.id_in_subsession % 2 == 1:
-                # 奇数のプレイヤーはグループ1に割り当てる
-                player.participant.vars["show_payoffs"] = True
-            else:
-                # 偶数のプレイヤーはグループ2に割り当てる
-                player.participant.vars["show_payoffs"] = False
+        for group in subsession.get_groups():
+            print(f"Group {group.id_in_subsession} created")
     else:
         subsession.group_like_round(1)
 
 
 class Group(BaseGroup):
     dicision_start_time = models.FloatField()
+    show_payoffs = models.BooleanField()
 
 
 class Player(BasePlayer):
@@ -62,6 +58,8 @@ class Player(BasePlayer):
         label="Highest action",
         initial=0,
     )
+
+    show_payoffs = models.BooleanField(label="Show payoffs")
 
 
 # FUNCTION
@@ -143,10 +141,25 @@ def record_highest_action(player: Player) -> None:
         player.highest_action = highest_neighbor_action
 
 
+def record_show_payoffs(player: Player) -> None:
+    player.show_payoffs = player.participant.vars.get("show_payoffs")
+
+
 def save_player_data(player: Player):
+    player.payoff += player.current_payoff
     record_neighbor_actions(player)
     record_neighbor_payoffs(player)
     record_highest_action(player)
+    record_show_payoffs(player)
+
+
+def set_conditions(group: Group):
+    if group.round_number != 1:
+        return
+
+    group.show_payoffs = random.choice([True, False])
+    for player in group.get_players():
+        player.participant.vars["show_payoffs"] = group.show_payoffs
 
 
 # PAGES
@@ -156,11 +169,6 @@ class WaitForAll(WaitPage):
     @staticmethod
     def is_displayed(player: Player):
         return player.round_number == 1
-
-    @staticmethod
-    def before_next_page(group: Group, timeout_happened):
-        # record_start_time(group.subsession)
-        group.dicision_start_time = time.time()
 
 
 class Decision(Page):
@@ -199,13 +207,12 @@ class Decision(Page):
 
 
 class DecisionWaitPage(WaitPage):
-    after_all_players_arrive = "set_payoffs"
-    timeout_seconds = 20
+    def after_all_players_arrive(group: Group):
+        set_payoffs(group)
+        set_conditions(group)
 
 
 class Results(Page):
-    # timeout_seconds = 5
-
     @staticmethod
     def get_timeout_seconds(player):
         is_dropped = player.participant.vars.get("is_dropped", False)
@@ -227,14 +234,12 @@ class Results(Page):
             "self_payoff": player.current_payoff,
             "actions": get_neighbors_actions(action_list, p_pos, C.NEIGHBOR_NUM),
             "payoffs": get_neighbors_payoffs(payoff_list, p_pos, C.NEIGHBOR_NUM),
-            "show_payoffs": player.group.show_payoffs,
+            "show_payoffs": player.participant.vars.get("show_payoffs"),
             "num_of_k": C.NEIGHBOR_NUM,
         }
 
 
 class ResultsWaitPage(WaitPage):
-    timeout_seconds = 10
-
     @staticmethod
     def after_all_players_arrive(group: Group):
         record_start_time(group.subsession)
