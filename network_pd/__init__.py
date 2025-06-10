@@ -51,6 +51,7 @@ class Player(BasePlayer):
         label="Choose your action:",
         widget=widgets.RadioSelect,
     )
+    confirm_results = models.IntegerField()
     time_out = models.BooleanField(initial=False)
     current_payoff = models.IntegerField(
         label="Current payoff",
@@ -252,7 +253,10 @@ class DecisionWaitPage(WaitPage):
         # get decided player number
         decided_count = 0
         for p in self.player.group.get_players():
+            print(f"P: {p}, dropped: {p.participant.vars.get('is_dropped')}")
             if p.field_maybe_none("action") is not None:
+                decided_count += 1
+            elif p.participant.vars.get("is_dropped"):
                 decided_count += 1
         print(f"DecisionWaitPage: decided_count = {decided_count}")
         if decided_count == C.PLAYERS_PER_GROUP:
@@ -263,12 +267,24 @@ class DecisionWaitPage(WaitPage):
 
 
 class Results(Page):
+
+    @staticmethod
+    def live_method(player: Player, data):
+        print(f"Player {player.id_in_group} confirm: {data["confirm"]}")
+        player.confirm_results = data["confirm"]
+
+        if player.confirm_results == 99:
+            player.participant.vars["is_dropped"] = True
+        else:
+            player.participant.vars["is_dropped"] = False
+        return {0: "game_finished"}
+
     @staticmethod
     def get_timeout_seconds(player):
         is_dropped = player.participant.vars.get("is_dropped", False)
         if is_dropped:
-            return 2
-        return 10
+            return 20000
+        return 100000
 
     @staticmethod
     def js_vars(player: Player):
@@ -290,9 +306,37 @@ class Results(Page):
 
 
 class ResultsWaitPage(WaitPage):
+    template_name = "network_pd/MyWaitPage.html"
+
     @staticmethod
     def after_all_players_arrive(group: Group):
         record_start_time(group.subsession)
+
+    def socket_url(self):
+        session_pk = self._session_pk
+        page_index = self._index_in_pages
+        participant_id = self.participant.id
+
+        res = channel_utils.group_wait_page_path(
+            session_pk=session_pk,
+            page_index=page_index,
+            participant_id=participant_id,
+            group_id=self.player.group_id,
+        )
+        print(f"DecisionWaitPage: res = {res}")
+
+        # get decided player number
+        confirmed_count = 0
+        for p in self.player.group.get_players():
+            print(f"P: {p}, dropped: {p.participant.vars.get('is_dropped')}")
+            if p.field_maybe_none("confirm_results") is not None:
+                confirmed_count += 1
+        print(f"DecisionWaitPage: confirmed_count = {confirmed_count}")
+        if confirmed_count == C.PLAYERS_PER_GROUP:
+            # if all players have decided, mark the group as completed
+            self._mark_completed_and_notify(self.player.group)
+
+        return res
 
 
 page_sequence = [
