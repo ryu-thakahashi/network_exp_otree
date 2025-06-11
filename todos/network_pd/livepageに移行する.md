@@ -1,4 +1,5 @@
 - [x] アプリを作成する
 - [x] Decision に変更する
 - [x] Decision Page の見た目を揃える
-- [ ] Live で Decision を送信する
+- [x] Live で Decision を送信する
+- [ ] みんなが意志決定したら，Results を live で返信する

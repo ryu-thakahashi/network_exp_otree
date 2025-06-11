@@ -60,26 +60,6 @@ class Player(BasePlayer):
 
 
 # FUNCTION
-def get_neighbors(network_size: int, p_id: int, k: int) -> set:
-    half_k = k // 2
-    nei_pos = [(p_id + i) % network_size for i in range(-half_k, half_k + 1)]
-    nei_pos.remove(p_id)
-
-    return nei_pos
-
-
-def get_neighbors_actions(act_list: list, p_pos: int, k: int) -> list:
-    neighbors = get_neighbors(len(act_list), p_pos, k)
-    actions = [act_list[i] for i in neighbors]
-    return actions
-
-
-def get_neighbors_payoffs(payoff_list: list, p_pos: int, k: int) -> list:
-    neighbors = get_neighbors(len(payoff_list), p_pos, k)
-    payoffs = [payoff_list[i] for i in neighbors]
-    return payoffs
-
-
 def calc_payoff(act_list: list, p_pos: int, k: int, bc_ratio: int) -> float:
     print(f"calc_payoff: p_pos={p_pos}, k={k}, bc_ratio={bc_ratio}")
     neighbors = get_neighbors(len(act_list), p_pos, k)
@@ -91,21 +71,13 @@ def calc_payoff(act_list: list, p_pos: int, k: int, bc_ratio: int) -> float:
 
 def set_payoffs(group: Group) -> None:
     player_list = group.get_players()
-    check_data("set_payoffs finished 1", player_list[0])
-
     action_list = [p.get_action_or_random_choice() for p in player_list]
-    check_data("set_payoffs finished 2", player_list[0])
 
     for player in player_list:
-        check_data("set_payoffs finished 3", player_list[0])
         p_pos = player.id_in_group - 1
-        check_data("set_payoffs finished 4", player_list[0])
         player.current_payoff = calc_payoff(
             action_list, p_pos, C.NEIGHBOR_NUM, C.BC_RATIO
         )
-        check_data("set_payoffs finished 4.5", player_list[0])
-
-    check_data("set_payoffs finished 5", player_list[0])
 
 
 def record_start_time(subsession: Subsession) -> None:
@@ -184,6 +156,17 @@ def set_conditions(group: Group):
         player.participant.vars["show_payoffs"] = group.show_payoffs
 
 
+def get_action_payoff_list(player: Player) -> list:
+    print(f"get_action_payoff_list: player={player.id_in_group}")
+    player_list = player.group.get_players()
+    print(f"get_action_payoff_list: player_list={player_list}")
+    action_list = [p.get_action() for p in player_list]
+    print(f"get_action_payoff_list: action_list={action_list}")
+    payoff_list = [p.current_payoff for p in player_list]
+    print(f"get_action_payoff_list: payoff_list={payoff_list}")
+    return action_list, payoff_list
+
+
 # PAGES
 class WaitForAll(WaitPage):
     group_by_arrival_time = True
@@ -211,6 +194,9 @@ class Decision(Page):
         if count_acted_players(player) == C.PLAYERS_PER_GROUP:
             check_data(data, player)
             set_payoffs(player.group)
+            action_list, payoff_list = get_action_payoff_list(player)
+
+            return game_results(player, action_list, payoff_list)
             # save_player_data(player)
 
         # if player.action == 99:
