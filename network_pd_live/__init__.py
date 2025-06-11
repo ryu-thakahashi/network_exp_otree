@@ -1,4 +1,5 @@
 from otree.api import *
+from .live_funcs import *
 import time
 import random
 
@@ -24,6 +25,11 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
+    action = models.IntegerField()
+    current_payoff = models.FloatField(
+        doc="The current payoff of the player in the current round"
+    )
+
     actions = models.StringField(
         doc="A string of actions taken by the player in the current round, e.g., 'CCDDCC'"
     )
@@ -41,6 +47,16 @@ class Player(BasePlayer):
         label="Highest action",
     )
     show_payoffs = models.BooleanField(label="Show payoffs")
+
+    def get_action(self):
+        if self.field_maybe_none("action") in [None, 99]:
+            return None
+        return self.action
+
+    def get_action_or_random_choice(self):
+        if self.field_maybe_none("action") in [None, 99]:
+            self.action = random.choice([0, 1])
+        return self.action
 
 
 # FUNCTION
@@ -65,20 +81,31 @@ def get_neighbors_payoffs(payoff_list: list, p_pos: int, k: int) -> list:
 
 
 def calc_payoff(act_list: list, p_pos: int, k: int, bc_ratio: int) -> float:
+    print(f"calc_payoff: p_pos={p_pos}, k={k}, bc_ratio={bc_ratio}")
     neighbors = get_neighbors(len(act_list), p_pos, k)
+    print(f"calc_payoff: neighbors={neighbors}")
     actions = [act_list[i] for i in neighbors]
+    print(f"calc_payoff: actions={actions}")
     return bc_ratio * sum(actions) - len(actions) * act_list[p_pos] + k
 
 
 def set_payoffs(group: Group) -> None:
     player_list = group.get_players()
-    action_list = [p.get_action() for p in player_list]
+    check_data("set_payoffs finished 1", player_list[0])
+
+    action_list = [p.get_action_or_random_choice() for p in player_list]
+    check_data("set_payoffs finished 2", player_list[0])
 
     for player in player_list:
+        check_data("set_payoffs finished 3", player_list[0])
         p_pos = player.id_in_group - 1
+        check_data("set_payoffs finished 4", player_list[0])
         player.current_payoff = calc_payoff(
             action_list, p_pos, C.NEIGHBOR_NUM, C.BC_RATIO
         )
+        check_data("set_payoffs finished 4.5", player_list[0])
+
+    check_data("set_payoffs finished 5", player_list[0])
 
 
 def record_start_time(subsession: Subsession) -> None:
@@ -163,10 +190,13 @@ class WaitForAll(WaitPage):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.round_number == 1
+        # return player.round_number == 1
+        pass
 
 
 class Decision(Page):
+    form_model = Player
+    form_fields = ["action"]
 
     @staticmethod
     def js_vars(player: Player):
@@ -174,13 +204,20 @@ class Decision(Page):
 
     @staticmethod
     def live_method(player: Player, data):
+        check_data(data, player)
         player.action = data["action"]
+        check_data(data, player)
 
-        if player.action == 99:
-            player.participant.vars["is_dropped"] = True
-        else:
-            player.participant.vars["is_dropped"] = False
-        return {0: "game_finished"}
+        if count_acted_players(player) == C.PLAYERS_PER_GROUP:
+            check_data(data, player)
+            set_payoffs(player.group)
+            # save_player_data(player)
+
+        # if player.action == 99:
+        #     player.participant.vars["is_dropped"] = True
+        # else:
+        #     player.participant.vars["is_dropped"] = False
+        return {player.id_in_group: {"type": "game_finished"}}
 
 
 class ResultsWaitPage(WaitPage):
