@@ -10,10 +10,10 @@ SESSION_CONFIGS = [
         # use_browser_bots=True,
     ),
     dict(
-        name="network_pd_live",
-        display_name="Network Public Goods Game (Live page)",
+        name="full_app_sequence",
+        display_name="Network Prisoner's Dilemma (full app sequence)",
         num_demo_participants=12,
-        app_sequence=["network_pd_live"],
+        app_sequence=["consent", "experiment_introduction", "network_pd"],
         # use_browser_bots=True,
     ),
 ]

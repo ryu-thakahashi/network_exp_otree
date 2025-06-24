@@ -54,11 +54,18 @@
 
 <div style="display: block">{{formfields}} {{ next_button }}</div>
 
+<script
+	type="module"
+	src="{{ static 'network_pd_live/plot_network.js' }}"
+></script>
+<script
+	type="module"
+	src="{{ static 'network_pd_live/websocket.js' }}"
+></script>
 <script src="{{ static 'network_pd_live/decision_btn.js' }}"></script>
 <script src="{{ static 'network_pd_live/next_btn.js' }}"></script>
 
 <link rel="stylesheet" href="{{ static 'network_pd/timer.css' }}" />
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="{{ static 'network_pd/plot_network.js' }}"></script>
 
 {{ endblock }}

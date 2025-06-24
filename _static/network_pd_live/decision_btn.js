@@ -21,24 +21,6 @@ function disableButtons() {
 	btnB.disabled = true;
 }
 
-function liveRecv(data) {
-	console.log("received a message!", data);
-	const dataType = data.type;
-	if (dataType === "all_players_decided") {
-		// すべてのプレイヤーが決定した場合，フィードバック画面へ
-		console.log("All players have made their decisions.");
-	} else if (dataType === "all_players_confirmed") {
-		// すべてのプレイヤーが結果を確認した場合，意志決定画面へ
-		console.log("All players have confirmed their decisions.");
-	} else if (dataType === "game_finished") {
-		// ゲームが終了した場合，最終結果を表示
-		console.log("Game finished, submitting form.");
-		// document.getElementById("form").submit();
-	} else {
-		console.warn("Unknown message data:", data);
-	}
-}
-
 window.addEventListener("unload", function () {
 	liveSend({ action: 99 });
 });

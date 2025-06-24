@@ -2,4 +2,5 @@
 - [x] Decision に変更する
 - [x] Decision Page の見た目を揃える
 - [x] Live で Decision を送信する
-- [ ] みんなが意志決定したら，Results を live で返信する
+- [x] みんなが意志決定したら，Results を live で返信する
+- [ ] 受信した live をもとに，結果を表示する

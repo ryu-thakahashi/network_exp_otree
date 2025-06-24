@@ -47,9 +47,9 @@ def game_results(player: BasePlayer, action_list, payoff_list) -> dict:
     return {
         player.id_in_group: {
             "type": "game_results",
-            # "show_payoff": player.participant.vars.get("show_payoffs", False),
-            # "player_payoff": player.current_payoff,
-            # "player_action": player.get_action(),
+            "show_payoff": player.participant.vars.get("show_payoffs", False),
+            "player_payoff": player.current_payoff,
+            "player_action": player.get_action(),
             "neighbor_actions": nei_actions,
             "neighbor_payoffs": nei_payoffs,
         }
