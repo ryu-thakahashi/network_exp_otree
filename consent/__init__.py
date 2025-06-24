@@ -7,7 +7,7 @@ Your app description
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'consent'
+    NAME_IN_URL = "consent"
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
 
@@ -25,7 +25,7 @@ class Player(BasePlayer):
 
 
 # PAGES
-class MyPage(Page):
+class Consent(Page):
     pass
 
 
@@ -37,4 +37,4 @@ class Results(Page):
     pass
 
 
-page_sequence = [MyPage, ResultsWaitPage, Results]
+page_sequence = [Consent]

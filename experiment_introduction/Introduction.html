@@ -1,0 +1,22 @@
+{{ block title }} 実験説明 {{ endblock }} {{ block content }}
+<p>
+	実験参加に同意していただきありがとうございます。以下の実験の説明をお読みください。
+</p>
+
+<style>
+	.slide-embed {
+		width: 100%;
+		/* Google スライドは通常16:9なので、ratioは16/9 */
+		aspect-ratio: 16 / 9;
+		border: 0;
+	}
+</style>
+<iframe
+	src="https://docs.google.com/presentation/d/e/2PACX-1vTD6Xms60Oxsn5MR-Mi5UnQwXbY9lbUgbjujq2ZEJyUdgJIXsTQFA3LoduzYFSVtq2P5T19_YR7jwVI/pubembed?start=false&loop=false&delayms=3000"
+	class="slide-embed"
+	allowfullscreen="true"
+	mozallowfullscreen="true"
+	webkitallowfullscreen="true"
+></iframe>
+<button class="btn btn-primary">理解度確認テストへ</button>
+{{ endblock }}
