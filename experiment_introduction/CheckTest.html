@@ -13,9 +13,9 @@
 		</div>
 		<img src="{{ static 'check_test/payoff_table.png'}}" style="width: 100%" />
 	</div>
-	<div class="form">{{formfield 'question_1'}}</div>
-	<br />
+	<div class="form">{{formfield 'q_1'}}</div>
 	<hr />
+	<br />
 </div>
 
 <div id="q2">
@@ -26,9 +26,9 @@
 		</div>
 		<img src="{{ static 'check_test/payoff_table.png'}}" style="width: 100%" />
 	</div>
-	<div class="form">{{formfield 'question_2'}}</div>
-	<br />
+	<div class="form">{{formfield 'q_2'}}</div>
 	<hr />
+	<br />
 </div>
 
 <div id="q3">
@@ -39,9 +39,21 @@
 		</div>
 		<img src="{{ static 'check_test/payoff_table.png'}}" style="width: 100%" />
 	</div>
-	<div class="form">{{formfield 'question_3'}}</div>
-	<br />
+	<div class="form">{{formfield 'q_3'}}</div>
 	<hr />
+	<br />
+</div>
+
+<div id="q4">
+	<div class="description">
+		<h4>
+			問題 4：正しい記述には 「正しい」 を，誤った記述には
+			「誤り」を選択してください．
+		</h4>
+	</div>
+	<div class="form">
+		{{formfield 'q_4_1'}} {{formfield 'q_4_2'}} {{formfield 'q_4_3'}}
+	</div>
 </div>
 
 {{ next_button }} {{ endblock }}
