@@ -16,6 +16,20 @@ SESSION_CONFIGS = [
         app_sequence=["consent", "experiment_introduction", "network_pd"],
         # use_browser_bots=True,
     ),
+    dict(
+        name="work",
+        display_name="work",
+        num_demo_participants=12,
+        app_sequence=["work"],
+        num_rounds=10,
+    ),
+    dict(
+        name="prempexp",
+        display_name="prempexp",
+        num_demo_participants=2,
+        app_sequence=["prempexp"],
+        num_rounds=10,
+    ),
 ]
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
 # in SESSION_CONFIGS, except those that explicitly override it.

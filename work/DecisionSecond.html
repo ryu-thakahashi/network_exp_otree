@@ -1,0 +1,9 @@
+{{ block title }}ラウンド {{ round_number }}{{ endblock }}
+
+{{ block content }}
+<p>あなたは後に選択します。</p>
+<p>相手の選択: <strong>{{ first_decision_label }}</strong></p>
+<p>相手が選択にかけた時間: <strong>{{ delay_shown }} 秒</strong></p>
+{{ formfields }}
+{{ next_button }}
+{{ endblock }}

@@ -1,0 +1,46 @@
+{% block title %}
+    実験の説明（1/2）
+{% endblock %}
+
+{% block content %}
+    <p>
+        これから、他の参加者との間で行う意思決定ゲームに参加していただきます。
+    </p>
+
+    <p>
+        あなたは2人1組のペアになり、囚人のジレンマゲームを複数ラウンド行います。
+    </p>
+
+    <p>
+        各ラウンドでは、「<strong>C(協力する)</strong>」または「<strong>D(裏切る)</strong>」のどちらかを選択します。
+        あなたと相手の選択の組み合わせに応じて、ポイントが付与されます。
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>あなた＼相手</th>
+                <th>C(協力する)</th>
+                <th>D(裏切る)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>C(協力する)</strong></td>
+                <td>あなた3点／相手3点</td>
+                <td>あなた0点／相手5点</td>
+            </tr>
+            <tr>
+                <td><strong>D(裏切る)</strong></td>
+                <td>あなた5点／相手0点</td>
+                <td>あなた1点／相手1点</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        得点はすべてのラウンド終了後に合算されます。
+    </p>
+
+    {% next_button %}
+{% endblock %}
